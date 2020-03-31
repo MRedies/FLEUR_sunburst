@@ -36,15 +36,20 @@ parseTree <- function(node, parentString, outlist){
   return(outlist)
 }
 
-
-name <- "/Users/redies/calculations/rerun_timings/supercell_scale=2_nkpts=1/juDFT_times"
-jsonfile <- paste(name, ".json", sep="")
-data <- fromJSON(file=jsonfile)
-outlist <- data.frame(V1=character(), V2=integer())
-outlist <- parseTree(data, "", outlist)
-
-sunburst(outlist)
-plot <- sunburst(outlist)
-htmlfile <- paste(name, ".html", sep="")
-print(htmlfile)
-htmltools::save_html(plot, file=htmlfile)
+for (fol in Sys.glob("/Users/redies/calculations/benchmark/first_booster_run/*/k*/m*/juDFT_times*.json")){
+    htmlname <-  paste(substring(fol, 1, nchar(fol)-5), ".html", sep="")
+  if(!file.exists((htmlname))){
+    print("create:")
+    print(htmlname)
+    data <- fromJSON(file=fol)
+    outlist <- data.frame(V1=character(), V2=integer())
+    outlist <- parseTree(data, "", outlist)
+    
+    sunburst(outlist)
+    plot <- sunburst(outlist)
+    htmltools::save_html(plot, file=htmlname)
+  # }else{
+  #   print("exists:")
+  #   print(htmlname)
+  }
+}
